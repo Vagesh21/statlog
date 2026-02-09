@@ -1,0 +1,14 @@
+[Unit]
+Description=Raspberry Pi Monitor Service
+After=network.target mongodb.service
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/pi-monitor
+ExecStart=/home/pi/pi-monitor/venv/bin/python -m uvicorn backend.server:app --host 0.0.0.0 --port 8001
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

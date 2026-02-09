@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: pi-monitor-mongodb
+    restart: unless-stopped
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=pi_monitor
+    networks:
+      - pi-monitor-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: pi-monitor-backend
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/pi_monitor
+      - JWT_SECRET_KEY=change-this-in-production-to-a-random-secret
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # For Docker API access
+      - /sys:/sys:ro  # For system metrics
+      - /proc:/proc:ro  # For system metrics
+    depends_on:
+      - mongodb
+    networks:
+      - pi-monitor-network
+    privileged: true  # For system metrics access
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: pi-monitor-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:8001
+    depends_on:
+      - backend
+    networks:
+      - pi-monitor-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  pi-monitor-network:
+    driver: bridge

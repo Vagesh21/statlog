@@ -1,0 +1,14 @@
+[Unit]
+Description=Raspberry Pi Monitor Frontend
+After=network.target pi-monitor-backend.service
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/pi-monitor/frontend
+ExecStart=/usr/bin/yarn dev
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
