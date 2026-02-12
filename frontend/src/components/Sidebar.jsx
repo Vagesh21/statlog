@@ -9,10 +9,10 @@ import {
   Settings, 
   LogOut,
   Cpu,
-  HardDrive
+  X
 } from 'lucide-react';
 
-function Sidebar() {
+function Sidebar({ open, setOpen, collapsed, setCollapsed }) {
   const location = useLocation();
   const { logout, user } = useAuth();
 
@@ -27,16 +27,45 @@ function Sidebar() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="fixed left-0 top-0 h-screen w-64 bg-dark-card border-r border-dark-border flex flex-col">
-      <div className="p-6 border-b border-dark-border">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+    <>
+      {open && (
+        <button
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setOpen(false)}
+          aria-label="Close menu overlay"
+        />
+      )}
+      <aside
+        className={`fixed left-0 top-0 z-50 h-screen bg-dark-card border-r border-dark-border flex flex-col transition-all duration-200
+        ${collapsed ? 'w-20' : 'w-64'}
+        ${open ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
+      >
+      <div className="p-4 border-b border-dark-border">
+        <div className="flex items-center justify-between">
+          <button
+            className="flex items-center space-x-3 text-left"
+            onClick={() => {
+              if (window.innerWidth < 1024) {
+                setOpen(false);
+                return;
+              }
+              setCollapsed(!collapsed);
+            }}
+            title={collapsed ? 'Expand menu' : 'Hide menu'}
+          >
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
             <Cpu size={24} />
           </div>
-          <div>
+          {!collapsed && (
+            <div>
             <h1 className="text-xl font-bold">Pi Monitor</h1>
             <p className="text-xs text-gray-400">v1.0.0</p>
-          </div>
+            </div>
+          )}
+          </button>
+          <button className="lg:hidden p-1 rounded hover:bg-dark-hover" onClick={() => setOpen(false)} aria-label="Close menu">
+            <X size={18} />
+          </button>
         </div>
       </div>
 
@@ -47,6 +76,7 @@ function Sidebar() {
             <Link
               key={item.path}
               to={item.path}
+              onClick={() => setOpen(false)}
               className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
                 isActive(item.path)
                   ? 'bg-blue-600 text-white'
@@ -54,28 +84,31 @@ function Sidebar() {
               }`}
             >
               <Icon size={20} />
-              <span className="font-medium">{item.label}</span>
+              {!collapsed && <span className="font-medium">{item.label}</span>}
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t border-dark-border">
+      <div className={`p-4 border-t border-dark-border ${collapsed ? 'px-2' : ''}`}>
         <div className="flex items-center justify-between mb-3">
-          <div>
+          {!collapsed && (
+            <div>
             <p className="text-sm font-medium">{user?.username}</p>
             <p className="text-xs text-gray-400">Administrator</p>
-          </div>
+            </div>
+          )}
         </div>
         <button
           onClick={logout}
-          className="flex items-center space-x-2 text-red-400 hover:text-red-300 transition-colors w-full"
+          className={`flex items-center text-red-400 hover:text-red-300 transition-colors w-full ${collapsed ? 'justify-center' : 'space-x-2'}`}
         >
           <LogOut size={18} />
-          <span>Logout</span>
+          {!collapsed && <span>Logout</span>}
         </button>
       </div>
-    </div>
+      </aside>
+    </>
   );
 }
 

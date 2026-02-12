@@ -22,6 +22,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     user = await db.users.find_one({"username": username})
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
+    if not user.get("is_active", True):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is inactive")
     return user
 
 @router.post("/login", response_model=Token)

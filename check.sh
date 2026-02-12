@@ -173,16 +173,16 @@ fi
 
 # Check ports
 echo -e "\nChecking port availability..."
-if lsof -Pi :8001 -sTCP:LISTEN -t &> /dev/null; then
-    print_warning "Port 8001 is already in use (backend)"
+if lsof -Pi :8003 -sTCP:LISTEN -t &> /dev/null; then
+    print_warning "Port 8003 is already in use (backend)"
 else
-    print_status 0 "Port 8001 is available (backend)"
+    print_status 0 "Port 8003 is available (backend)"
 fi
 
-if lsof -Pi :3000 -sTCP:LISTEN -t &> /dev/null; then
-    print_warning "Port 3000 is already in use (frontend)"
+if lsof -Pi :3003 -sTCP:LISTEN -t &> /dev/null; then
+    print_warning "Port 3003 is already in use (frontend)"
 else
-    print_status 0 "Port 3000 is available (frontend)"
+    print_status 0 "Port 3003 is available (frontend)"
 fi
 
 # Summary
@@ -206,6 +206,6 @@ else
 fi
 
 echo ""
-echo "Access the dashboard at: http://localhost:3000"
+echo "Access the dashboard at: http://localhost:3003"
 echo "Default login: admin / password"
 echo ""

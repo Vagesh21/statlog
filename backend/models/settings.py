@@ -8,6 +8,7 @@ class ServiceLink(BaseModel):
     url: str
     icon: Optional[str] = None
     enabled: bool = True
+    show_on_dashboard: bool = True
     container_name: Optional[str] = None
     description: Optional[str] = None
 

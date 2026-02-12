@@ -77,9 +77,9 @@ cd pi-monitor
 docker-compose up -d
 
 # Access the dashboard
-# Frontend: http://localhost:3000
-# Backend API: http://localhost:8001
-# API Docs: http://localhost:8001/docs
+# Frontend: http://localhost:3003
+# Backend API: http://localhost:8003
+# API Docs: http://localhost:8003/docs
 ```
 
 ### Manual Installation (Raspberry Pi 4B)
@@ -112,7 +112,7 @@ cp .env.example .env
 nano .env
 
 # Start backend
-uvicorn server:app --host 0.0.0.0 --port 8001
+uvicorn server:app --host 0.0.0.0 --port 8003
 ```
 
 #### Frontend Setup
@@ -124,7 +124,7 @@ yarn install
 
 # Configure environment
 cp .env.example .env
-# Edit .env if needed (default: http://localhost:8001)
+# Edit .env if needed (default: http://localhost:8003)
 
 # Start frontend
 yarn dev
@@ -260,7 +260,7 @@ Configure warning and critical thresholds in Settings → General:
 - `POST /api/auth/login` - Login (returns JWT token)
 - `GET /api/auth/me` - Get current user
 
-Full API documentation available at: `http://localhost:8001/docs`
+Full API documentation available at: `http://localhost:8003/docs`
 
 ## 🐳 Docker Deployment
 
@@ -320,13 +320,13 @@ server {
     server_name your-domain.com;
 
     location / {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:3003;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
 
     location /api {
-        proxy_pass http://localhost:8001;
+        proxy_pass http://localhost:8003;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }

@@ -4,16 +4,18 @@ import { useAuth } from '../context/AuthContext';
 import { Container, Play, Square, RotateCw, Search } from 'lucide-react';
 import { toast } from 'react-toastify';
 
+let cachedContainers = [];
+
 function DockerContainers() {
   const { API_URL } = useAuth();
-  const [containers, setContainers] = useState([]);
-  const [filteredContainers, setFilteredContainers] = useState([]);
+  const [containers, setContainers] = useState(cachedContainers);
+  const [filteredContainers, setFilteredContainers] = useState(cachedContainers);
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(cachedContainers.length === 0);
 
   useEffect(() => {
     fetchContainers();
-    const interval = setInterval(fetchContainers, 3000);
+    const interval = setInterval(fetchContainers, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -33,8 +35,11 @@ function DockerContainers() {
   const fetchContainers = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/docker/containers`);
-      setContainers(response.data.containers);
-      setFilteredContainers(response.data.containers);
+      const data = response.data.data || response.data;
+      const nextContainers = data.containers || [];
+      cachedContainers = nextContainers;
+      setContainers(nextContainers);
+      setFilteredContainers(nextContainers);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching containers:', error);
@@ -61,17 +66,17 @@ function DockerContainers() {
   };
 
   if (loading) {
-    return <div className="p-8">Loading containers...</div>;
+    return <div className="p-4 md:p-8">Loading containers...</div>;
   }
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="p-4 md:p-8 space-y-6">
+      <div className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
         <div>
           <h1 className="text-3xl font-bold">Docker Containers</h1>
           <p className="text-gray-400">Manage and monitor your Docker containers</p>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
             <input
@@ -79,7 +84,7 @@ function DockerContainers() {
               placeholder="Search containers..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input pl-10 w-64"
+              className="input pl-10 w-full sm:w-64"
             />
           </div>
           <button onClick={fetchContainers} className="btn-secondary flex items-center space-x-2">

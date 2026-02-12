@@ -75,9 +75,6 @@ function Login() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
 
-          <div className="text-center text-sm text-gray-400">
-            <p>Default: admin / password</p>
-          </div>
         </form>
       </div>
     </div>

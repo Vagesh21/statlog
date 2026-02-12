@@ -6,7 +6,7 @@ After=network.target mongodb.service
 Type=simple
 User=pi
 WorkingDirectory=/home/pi/pi-monitor
-ExecStart=/home/pi/pi-monitor/venv/bin/python -m uvicorn backend.server:app --host 0.0.0.0 --port 8001
+ExecStart=/home/pi/pi-monitor/venv/bin/python -m uvicorn backend.server:app --host 0.0.0.0 --port 8003
 Restart=always
 RestartSec=10
 

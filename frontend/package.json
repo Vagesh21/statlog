@@ -20,7 +20,7 @@
     "autoprefixer": "^10.4.20"
   },
   "scripts": {
-    "dev": "vite --host 0.0.0.0 --port 3000",
+    "dev": "vite --host 0.0.0.0 --port 3003",
     "build": "vite build",
     "preview": "vite preview"
   },

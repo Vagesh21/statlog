@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mongodb:
-    image: mongo:7.0
+    image: mongo:4.4.18
     container_name: pi-monitor-mongodb
     restart: unless-stopped
     volumes:
@@ -11,6 +11,11 @@ services:
       - MONGO_INITDB_DATABASE=pi_monitor
     networks:
       - pi-monitor-network
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     build:
@@ -19,19 +24,28 @@ services:
     container_name: pi-monitor-backend
     restart: unless-stopped
     ports:
-      - "8001:8001"
+      - "8003:8001"
     environment:
       - MONGO_URL=mongodb://mongodb:27017/pi_monitor
       - JWT_SECRET_KEY=change-this-in-production-to-a-random-secret
+      - DEFAULT_ADMIN_USERNAME=admin
+      - DEFAULT_ADMIN_PASSWORD=password
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock  # For Docker API access
       - /sys:/sys:ro  # For system metrics
       - /proc:/proc:ro  # For system metrics
+      - /:/host:ro  # Host filesystem for mounted disk visibility
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     networks:
       - pi-monitor-network
     privileged: true  # For system metrics access
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend:
     build:
@@ -40,11 +54,12 @@ services:
     container_name: pi-monitor-frontend
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3003:3000"
     environment:
-      - REACT_APP_BACKEND_URL=http://localhost:8001
+      - VITE_BACKEND_URL=
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - pi-monitor-network
 

@@ -13,8 +13,8 @@ cd pi-monitor
 docker-compose up -d
 
 # 3. Access the dashboard
-# Frontend: http://localhost:3000
-# Backend API: http://localhost:8001/docs
+# Frontend: http://localhost:3003
+# Backend API: http://localhost:8003/docs
 # Default login: admin / password
 ```
 
@@ -75,7 +75,7 @@ yarn install
 
 # Configure environment (usually no changes needed)
 nano .env
-# Default: REACT_APP_BACKEND_URL=http://localhost:8001
+# Default: VITE_BACKEND_URL=http://localhost:8003
 ```
 
 #### Step 4: Start Services
@@ -95,7 +95,7 @@ sudo systemctl start mongodb
 # Terminal 2: Start Backend
 cd backend
 source venv/bin/activate
-python -m uvicorn server:app --host 0.0.0.0 --port 8001
+python -m uvicorn server:app --host 0.0.0.0 --port 8003
 
 # Terminal 3: Start Frontend
 cd frontend
@@ -143,7 +143,7 @@ sudo systemctl status pi-monitor-frontend
    - Copy the 16-character password
 
 3. **Add to Dashboard**
-   - Login to dashboard (http://localhost:3000)
+   - Login to dashboard (http://localhost:3003)
    - Go to Settings → SMTP Settings
    - Fill in:
      - SMTP Server: smtp.gmail.com
@@ -160,7 +160,7 @@ sudo systemctl status pi-monitor-frontend
 
 ### 1. Login
 
-- URL: http://localhost:3000
+- URL: http://localhost:3003
 - Default credentials: **admin** / **password**
 - **IMPORTANT: Change password after first login!**
 
@@ -205,7 +205,7 @@ Settings → General:
 
 After installation, verify:
 
-- [ ] Dashboard loads at http://localhost:3000
+- [ ] Dashboard loads at http://localhost:3003
 - [ ] Login works with admin/password
 - [ ] System Metrics shows CPU, RAM, Temperature
 - [ ] Storage Devices table displays filesystems
@@ -224,11 +224,11 @@ After installation, verify:
 ```bash
 # Check logs
 cd /app/backend
-python -m uvicorn server:app --host 0.0.0.0 --port 8001
+python -m uvicorn server:app --host 0.0.0.0 --port 8003
 
 # Common issues:
 # 1. Port already in use
-sudo lsof -i :8001
+sudo lsof -i :8003
 # Kill process: sudo kill -9 <PID>
 
 # 2. MongoDB not running
@@ -251,8 +251,8 @@ cd /app/frontend
 rm -rf node_modules yarn.lock
 yarn install
 
-# Check if port 3000 is available
-sudo lsof -i :3000
+# Check if port 3003 is available
+sudo lsof -i :3003
 ```
 
 ### Docker monitoring not working
@@ -318,7 +318,7 @@ sudo reboot
 
 ```bash
 # Via API
-curl -X POST http://localhost:8001/api/auth/register \
+curl -X POST http://localhost:8003/api/auth/register \
   -H "Authorization: Bearer <your-token>" \
   -H "Content-Type: application/json" \
   -d '{"username": "newuser", "password": "strong-password"}'
@@ -339,7 +339,7 @@ server {
     server_name your-pi-hostname.local;
 
     location / {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:3003;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -348,7 +348,7 @@ server {
     }
 
     location /api {
-        proxy_pass http://localhost:8001;
+        proxy_pass http://localhost:8003;
         proxy_http_version 1.1;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -412,7 +412,7 @@ sudo systemctl restart pi-monitor-frontend
 
 - GitHub Issues: https://github.com/yourusername/pi-monitor/issues
 - Documentation: See README.md
-- API Docs: http://localhost:8001/docs
+- API Docs: http://localhost:8003/docs
 
 ## References
 

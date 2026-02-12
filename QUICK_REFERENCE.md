@@ -9,7 +9,7 @@ cd pi-monitor
 docker-compose up -d
 
 # Access
-http://localhost:3000
+http://localhost:3003
 Login: admin / password
 ```
 
@@ -25,9 +25,9 @@ Login: admin / password
 4. Paste in dashboard Settings
 
 ### Service URLs
-- Frontend: `http://localhost:3000`
-- Backend API: `http://localhost:8001`
-- API Docs: `http://localhost:8001/docs`
+- Frontend: `http://localhost:3003`
+- Backend API: `http://localhost:8003`
+- API Docs: `http://localhost:8003/docs`
 - MongoDB: `mongodb://localhost:27017/pi_monitor`
 
 ### Configuration Files
@@ -83,7 +83,7 @@ sudo systemctl start mongodb
 # Start backend
 cd /app/backend
 source venv/bin/activate
-python -m uvicorn server:app --host 0.0.0.0 --port 8001
+python -m uvicorn server:app --host 0.0.0.0 --port 8003
 
 # Start frontend (new terminal)
 cd /app/frontend
@@ -123,19 +123,19 @@ EMAIL_TO=recipient@example.com
 
 ### Frontend (.env)
 ```env
-REACT_APP_BACKEND_URL=http://localhost:8001
+VITE_BACKEND_URL=http://localhost:8003
 ```
 
 ## 🎯 Quick Checks
 
 ### Is Backend Running?
 ```bash
-curl http://localhost:8001/api/health
+curl http://localhost:8003/api/health
 ```
 
 ### Is Frontend Running?
 ```bash
-curl http://localhost:3000
+curl http://localhost:3003
 ```
 
 ### Is MongoDB Running?
@@ -161,8 +161,8 @@ docker ps
 ### Port Already in Use
 ```bash
 # Find process
-sudo lsof -i :8001  # Backend
-sudo lsof -i :3000  # Frontend
+sudo lsof -i :8003  # Backend
+sudo lsof -i :3003  # Frontend
 
 # Kill process
 sudo kill -9 <PID>
@@ -238,22 +238,22 @@ Edit: `/app/frontend/tailwind.config.js`
 
 ```bash
 # Get JWT token
-TOKEN=$(curl -X POST http://localhost:8001/api/auth/login \
+TOKEN=$(curl -X POST http://localhost:8003/api/auth/login \
   -F "username=admin" \
   -F "password=password" \
   | jq -r '.access_token')
 
 # Get all metrics
 curl -H "Authorization: Bearer $TOKEN" \
-  http://localhost:8001/api/metrics/all
+  http://localhost:8003/api/metrics/all
 
 # Get containers
 curl -H "Authorization: Bearer $TOKEN" \
-  http://localhost:8001/api/docker/containers
+  http://localhost:8003/api/docker/containers
 
 # Get dongle status
 curl -H "Authorization: Bearer $TOKEN" \
-  http://localhost:8001/api/dongle/status
+  http://localhost:8003/api/dongle/status
 ```
 
 ## 🆘 Emergency Restart
@@ -303,7 +303,7 @@ docker-compose up -d
 ## 📞 Support
 
 - GitHub Issues: https://github.com/yourusername/pi-monitor/issues
-- API Documentation: http://localhost:8001/docs
+- API Documentation: http://localhost:8003/docs
 - Check Logs: `sudo journalctl -u pi-monitor-* -f`
 
 ---

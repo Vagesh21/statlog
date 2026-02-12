@@ -3,22 +3,27 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { Radio, Signal, Smartphone, Trash2, RefreshCw } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { formatMelbourne } from '../utils/time';
+
+let cachedDongleStatus = null;
 
 function DongleStatus() {
   const { API_URL } = useAuth();
-  const [dongleData, setDongleData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [dongleData, setDongleData] = useState(cachedDongleStatus);
+  const [loading, setLoading] = useState(!cachedDongleStatus);
 
   useEffect(() => {
     fetchDongleData();
-    const interval = setInterval(fetchDongleData, 5000);
+    const interval = setInterval(fetchDongleData, 7000);
     return () => clearInterval(interval);
   }, []);
 
   const fetchDongleData = async () => {
     try {
       const response = await axios.get(`${API_URL}/api/dongle/status`);
-      setDongleData(response.data);
+      const nextData = response.data.data || response.data;
+      cachedDongleStatus = nextData;
+      setDongleData(nextData);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching dongle data:', error);
@@ -43,12 +48,12 @@ function DongleStatus() {
   };
 
   if (loading || !dongleData) {
-    return <div className="p-8">Loading dongle status...</div>;
+    return <div className="p-4 md:p-8">Loading dongle status...</div>;
   }
 
   if (dongleData.error) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <div className="card">
           <div className="text-center py-8">
             <Radio size={64} className="mx-auto mb-4 text-gray-500" />
@@ -61,8 +66,8 @@ function DongleStatus() {
   }
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="p-4 md:p-8 space-y-6">
+      <div className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
         <div>
           <h1 className="text-3xl font-bold">Huawei E3372 Dongle Monitor</h1>
           <p className="text-gray-400">Real-time dongle status and SMS messages</p>
@@ -184,7 +189,7 @@ function DongleStatus() {
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
                       <span className="font-semibold">{msg.from}</span>
-                      <span className="text-sm text-gray-400">{msg.timestamp}</span>
+                      <span className="text-sm text-gray-400">{formatMelbourne(msg.timestamp)}</span>
                       {msg.unread && (
                         <span className="text-xs bg-blue-600 px-2 py-1 rounded">New</span>
                       )}

@@ -4,15 +4,18 @@ import { useAuth } from '../context/AuthContext';
 import { HardDrive, Usb } from 'lucide-react';
 import { toast } from 'react-toastify';
 
+let cachedDiskMetrics = null;
+let cachedUsbDevices = null;
+
 function SystemMetrics() {
   const { API_URL } = useAuth();
-  const [disk, setDisk] = useState(null);
-  const [usb, setUsb] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [disk, setDisk] = useState(cachedDiskMetrics);
+  const [usb, setUsb] = useState(cachedUsbDevices);
+  const [loading, setLoading] = useState(!(cachedDiskMetrics && cachedUsbDevices));
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 5000);
+    const interval = setInterval(fetchData, 8000);
     return () => clearInterval(interval);
   }, []);
 
@@ -23,8 +26,12 @@ function SystemMetrics() {
         axios.get(`${API_URL}/api/usb/devices`)
       ]);
 
-      setDisk(diskRes.data);
-      setUsb(usbRes.data);
+      const diskData = diskRes.data.data || diskRes.data;
+      const usbData = usbRes.data.data || usbRes.data;
+      cachedDiskMetrics = diskData;
+      cachedUsbDevices = usbData;
+      setDisk(diskData);
+      setUsb(usbData);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -33,11 +40,11 @@ function SystemMetrics() {
   };
 
   if (loading || !disk || !usb) {
-    return <div className="p-8">Loading...</div>;
+    return <div className="p-4 md:p-8">Loading...</div>;
   }
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 md:p-8 space-y-6">
       <div>
         <h1 className="text-3xl font-bold">System Metrics</h1>
         <p className="text-gray-400">Detailed storage and device information</p>

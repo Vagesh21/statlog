@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
-  const API_URL = import.meta.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+  const API_URL = import.meta.env.VITE_BACKEND_URL || `http://${window.location.hostname}:8003`;
 
   useEffect(() => {
     if (token) {

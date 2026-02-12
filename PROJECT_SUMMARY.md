@@ -222,7 +222,7 @@ EMAIL_TO=recipient@example.com
 
 ### Frontend (.env)
 ```env
-REACT_APP_BACKEND_URL=http://localhost:8001
+VITE_BACKEND_URL=http://localhost:8003
 ```
 
 ## Default Service Links
@@ -361,23 +361,23 @@ docker-compose up -d
 ### API Testing
 ```bash
 # Health check
-curl http://localhost:8001/api/health
+curl http://localhost:8003/api/health
 
 # Login
-curl -X POST http://localhost:8001/api/auth/login \
+curl -X POST http://localhost:8003/api/auth/login \
   -F "username=admin" \
   -F "password=password"
 
 # Get metrics (with token)
 curl -H "Authorization: Bearer <token>" \
-  http://localhost:8001/api/metrics/all
+  http://localhost:8003/api/metrics/all
 ```
 
 ## Support & Documentation
 
 - **README.md**: Overview and features
 - **INSTALLATION.md**: Detailed setup guide
-- **API Docs**: http://localhost:8001/docs (Interactive Swagger UI)
+- **API Docs**: http://localhost:8003/docs (Interactive Swagger UI)
 - **GitHub Issues**: For bug reports and feature requests
 
 ## Credits & Acknowledgments

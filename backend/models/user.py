@@ -7,6 +7,7 @@ class User(BaseModel):
     username: str
     hashed_password: str
     is_active: bool = True
+    role: str = "admin"
 
     class Config:
         json_schema_extra = {
